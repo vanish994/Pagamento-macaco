@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerador de Pix</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
+    input, button { width: 100%; padding: 0.75rem; margin: 0.5rem 0; }
+    #qrcode img { max-width: 100%; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Gerador de Pix</h1>
+  <input id="name" placeholder="Nome completo" />
+  <input id="email" placeholder="Email" />
+  <input id="value" placeholder="Valor (ex: 25.00)" />
+  <button onclick="generatePix()">Gerar Pix</button>
+  <pre id="pixcode"></pre>
+  <div id="qrcode"></div>
+
+  <script>
+    async function generatePix() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const value = document.getElementById('value').value;
+      const response = await fetch('/api/pix', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, value })
+      });
+      const data = await response.json();
+      document.getElementById('pixcode').textContent = data.pixCopyPaste;
+      document.getElementById('qrcode').innerHTML = `<img src="${data.qrCode}" alt="QR Code">`;
+    }
+  </script>
+</body>
+</html>
